@@ -33,7 +33,6 @@ export const fetchAddContact = createAsyncThunk(
       });
       if (result) {
         alert(`${name} is already is contacts`);
-
         return false;
       }
     },

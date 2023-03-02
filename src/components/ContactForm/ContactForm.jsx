@@ -14,7 +14,6 @@ const ContactForm = () => {
   const [{ name, number }, setState] = useState({ ...INITIAL_STATE });
   const contacts = useSelector(getAllContacts);
   const dispatch = useDispatch();
-  console.log(contacts);
 
   function onChange(e) {
     const { name, value } = e.target;
