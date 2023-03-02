@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { filterValue, getItem, addContact } from 'redux/contacts-slice';
-import css from './ContactForm.module.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchAddContact } from 'redux/contacts/contacts-operations';
+import { getAllContacts } from 'redux/contacts/contacts-selectors';
 import { nanoid } from 'nanoid';
+import css from './ContactForm.module.css';
 
 const INITIAL_STATE = {
   name: '',
@@ -10,32 +11,31 @@ const INITIAL_STATE = {
 };
 
 const ContactForm = () => {
-  const [{ name, number }, setState] = useState(INITIAL_STATE);
+  const [{ name, number }, setState] = useState({ ...INITIAL_STATE });
+  const contacts = useSelector(getAllContacts);
   const dispatch = useDispatch();
-  const contacts = useSelector(getItem);
+  console.log(contacts);
 
-  function onChange(eve) {
-    const { name, value } = eve.target;
+  function onChange(e) {
+    const { name, value } = e.target;
     setState(prevState => ({ ...prevState, [name]: value }));
   }
 
-  function onSubmit(eve) {
-    eve.preventDefault();
+  function onSubmit(e) {
+    e.preventDefault();
     const newContact = {
-      id: nanoid(5),
       name,
       number,
     };
 
-    if (contacts.some(x => x.name === newContact.name)) {
-      alert(`${newContact.name} is already is contacts`);
-      return;
+    dispatch(fetchAddContact({ name, number }));
+
+    if (contacts.some(contact => contact.name === newContact.name)) {
+      console.log(contacts.name);
+      setState({ name, number });
+    } else {
+      setState({ ...INITIAL_STATE });
     }
-
-    dispatch(addContact(newContact));
-    dispatch(filterValue(''));
-
-    setState({ ...INITIAL_STATE });
   }
 
   const labelId = nanoid();

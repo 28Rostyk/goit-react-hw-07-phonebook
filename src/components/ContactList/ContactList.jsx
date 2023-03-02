@@ -1,10 +1,12 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { getFilter, getItem, deleteContact } from 'redux/contacts-slice';
+import { getFilteredContacts } from 'redux/contacts/contacts-selectors';
+import { getFilter } from 'redux/filter/filter-selectors';
+import { fetchDeleteContact } from 'redux/contacts/contacts-operations';
 import css from './ContactList.module.css';
 
 const ContactList = () => {
-  const contacts = useSelector(getItem);
+  const filteredContacts = useSelector(getFilteredContacts);
   const filter = useSelector(getFilter);
   const dispatch = useDispatch();
 
@@ -12,13 +14,12 @@ const ContactList = () => {
     if (filter === '') {
       return false;
     }
-
-    return contacts.filter(x => x.name.toLowerCase().includes(filter));
+    return filteredContacts.filter(x => x.name.toLowerCase().includes(filter));
   }
 
   const fillter = contactsFillet();
+  const list = fillter ? fillter : filteredContacts;
 
-  const list = fillter ? fillter : contacts;
   return (
     <ul className={css.contactList}>
       {list.map(({ name, id, number }) => {
@@ -28,7 +29,7 @@ const ContactList = () => {
             <span className={css.contactNumber}>{number}</span>
             <button
               className={css.delButton}
-              onClick={() => dispatch(deleteContact(id))}
+              onClick={() => dispatch(fetchDeleteContact(id))}
             >
               Delete
             </button>
